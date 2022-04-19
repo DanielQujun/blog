@@ -229,6 +229,7 @@ package v1alpha1
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
 //+kubebuilder:resource:scope=Cluster
+// scope=Cluster 生成的CR为nonNamespace类型
 // IPPool is the Schema for the ippools API
 type IPPool struct {
 	metav1.TypeMeta   `json:",inline"`
