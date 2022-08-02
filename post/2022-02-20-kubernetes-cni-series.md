@@ -17,7 +17,7 @@ categories: [ Tech ]
 
 
 ## 关于这个系列
-此系列的博客，主要是用来分析Kubernetes环境下，各种开源组件的组网实现方案已及其IPAM设计。由于flannel、calico甚至cilium都已经非常流行，网上的文章也比较多，此系列更关注的是国内比较有特点的网络组件，具备一些业务特性，如网络池划分，固定IP等；
+此系列的博客，主要是用来分析Kubernetes环境下，各种开源组件的组网实现方案及其IPAM设计。由于flannel、calico甚至cilium都已经非常流行，网上的文章也比较多，此系列更关注的是国内比较有特点的网络组件，具备一些业务特性，如网络池划分，固定IP等；
 
 此系列既用作于自己的笔记加深对网络的理解，也希望能对其他的云原生同学们有所启发。
 
@@ -66,7 +66,7 @@ IPAM(IP Address Management)本来在k8s的最初设想中应该是不重要的�
 
 ## 分析的组件
 1. 阿里ACK: [HybridNet](https://bobozhu.cn/2022/03/05/hybridnet-introduce/)
-2. 灵雀云: kube-ovn
+2. 灵雀云: kube-ovn，灵雀云自己写了一些源码分析，先跳过。[kube-ovn](https://mp.weixin.qq.com/mp/appmsgalbum?action=getalbum&__biz=MzkxNzI2NjAxMg==&scene=1&album_id=2393354058289184770&count=3#wechat_redirect)
 3. 阿里云: Terway
 4. vmware: antrea
 
