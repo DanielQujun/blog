@@ -74,8 +74,7 @@ px4官方提供多种类型的基础镜像，根据不同类型预装了astyle�
 1. 创建/root/px4_docker目录；
 2. 进入/root/px4_docker目录；
 3. 执行以下命令，拉取PX4项目代码：
-
-```bash
+  ```bash
 # 安装git命令
 sudo apt-get install git
 
@@ -88,8 +87,7 @@ git checkout -b v1.13.0 v1.13.0
 ```
 
 1. 新建一个Dockerfile文件，写入内容如下：
-
-```docker
+  ```docker
 FROM [px4io/px4-dev-ros2-foxy](https://hub.docker.com/r/px4io/px4-dev-ros2-foxy):latest
 
 # 将PX4-Autopilot/Tools/setup目录里ubuntu.sh和requirements.txt，拷贝至容器的/tmp目录下
@@ -98,36 +96,28 @@ ADD PX4-Autopilot/Tools/setup/ubuntu.sh  PX4-Autopilot/Tools/setup/requirements.
 # 执行ubuntu.sh脚本，安装px4编译相关的依赖包, 不安装nuttx和模拟器的包
 RUN /tmp/ubuntu.sh --no-nuttx --no-sim-tools
 ```
-
-1. 构建运行镜像：`docker build -t mypx4_image:v1 .`
-2. 上条命令执行完成后，使用docker images命令将会看到mypx4_image镜像已经生成
+2. 构建运行镜像：`docker build -t mypx4_image:v1 .`
+3. 上条命令执行完成后，使用docker images命令将会看到mypx4_image镜像已经生成
 
 ### 1.3 使用容器镜像编译px4
 
 1. 执行以下命令启动容器在后台运行，此容器将/root/px4_docker映射至其/src目录。
-
-```docker
+  ```docker
 docker run -itd --privileged --env=LOCAL_USER_ID="$(id -u)" \
 -v /root/px4_docker:/src:rw \
 --network=host --name=mypx4-dev   mypx4_image:v1 /bin/bash
 ```
-
-1. 登录容器
-
-```docker
+2. 登录容器
+  ```docker
 docker exec -it --user $(id -u) mypx4-dev bash
 ```
-
-1. 在容器终端中执行编译命令
-
-```bash
+3. 在容器终端中执行编译命令
+  ```bash
 cd /src/PX4-Autopilot/
 make px4_sitl_default none_iris
 ```
-
-1. 输出类似以下内容则表示编译成功
-
-```bash
+4. 输出类似以下内容则表示编译成功
+  ```bash
 SITL COMMAND: "/src/PX4-Autopilot/build/px4_sitl_default/bin/px4" "/src/PX4-Autopilot/build/px4_sitl_default"/etc -s etc/init.d-posix/rcS -t "/src/PX4-Autopilot"/test_data
 Creating symlink /src/PX4-Autopilot/build/px4_sitl_default/etc -> /src/PX4-Autopilot/build/px4_sitl_default/tmp/rootfs/
 
@@ -149,8 +139,7 @@ INFO  [dataman] data manager file './dataman' size is 7866640 bytes
 PX4 SIM HOST: localhost
 INFO  [simulator] Waiting for simulator to accept connection on TCP port 4560
 ```
-
-1. 此时可以执行`exit`退出此容器，待下次有代码更新，再登录容器，重新编译
+5. 此时可以执行`exit`退出此容器，待下次有代码更新，再登录容器，重新编译
 
 ### 1.4 运行PX4
 
@@ -158,8 +147,7 @@ INFO  [simulator] Waiting for simulator to accept connection on TCP port 4560
 
 1. 在/root/px4_docker创建Scripts目录
 2. 进入Scripts目录，添加run_airsim_sitl.sh脚本，内容如下：
-
-```bash
+  ```bash
 #!/bin/bash
 # 判断当前环境是否有设置instance_num，如果没有则默认为0
 [ ! -z "$instance_num" ] && instance_num="0"
@@ -175,9 +163,7 @@ working_dir="$instance_path/instance_$instance_num"
 pushd "$working_dir" &>/dev/null
 $BIN_DIR -i $instance_num $BUILD_DIR -s "etc/init.d-posix/rcS" -t $TEST_DATA
 ```
-
-1. 启动容器
-
+3. 启动容器
 ```bash
 docker run -itd --privileged --env=LOCAL_USER_ID=1000 \
 --env=instance_num=0 \
@@ -189,21 +175,16 @@ docker run -itd --privileged --env=LOCAL_USER_ID=1000 \
 harbor.tiduyun.com/qujun/px4-dev-ros2-foxy:latest  \
 /src/Scripts/run_airsim_sitl.sh
 ```
-
-> --env=instance_num=0 容器添加instance_num环境变量，0表示当前为第1个px4实例
-> 
-
-> --env=PX4_SIM_HOST_ADDR=192.168.6.64 容器添加PX4_SIM_HOST_ADDR环境变量，指定远端airsim主机地址
-> 
-
-> -- name 后面指定此容器名称
-> 
-
-> 最后的/src/Scripts/run_airsim_sitl.sh 表示容器执行此命令启动
-> 
-1. 容器启动后，使用docker logs -f  mypx4-0将出现以下日志，当前px4处于等待连接服务端的状态
-
-```bash
+  > --env=instance_num=0 容器添加instance_num环境变量，0表示当前为第1个px4实例
+  > 
+  > --env=PX4_SIM_HOST_ADDR=192.168.6.64 容器添加PX4_SIM_HOST_ADDR环境变量，指定远端airsim主机地址
+  > 
+  > -- name 后面指定此容器名称
+  > 
+  > 最后的/src/Scripts/run_airsim_sitl.sh 表示容器执行此命令启动
+  > 
+4. 容器启动后，使用docker logs -f  mypx4-0将出现以下日志，当前px4处于等待连接服务端的状态
+  ```bash
 ______  __   __    ___ 
 | ___ \ \ \ / /   /   |
 | |_/ /  \ V /   / /| |
@@ -224,8 +205,7 @@ INFO  [simulator] Simulator using TCP on remote host 192.168.6.64 port 4560
 WARN  [simulator] Please ensure port 4560 is not blocked by a firewall.
 INFO  [simulator] Waiting for simulator to accept connection on TCP port 4560
 ```
-
-1. 如果需要启动多个px4运行实例，只需将上述的启动命令里的--env=instance_num改为其他数字，以及修改容器名称。px4将默认从4560端口开始连接airsim，并根据instance_num增加相应的值，如instance_num为2，则此实例将会连接4562端口。
+5. 如果需要启动多个px4运行实例，只需将上述的启动命令里的--env=instance_num改为其他数字，以及修改容器名称。px4将默认从4560端口开始连接airsim，并根据instance_num增加相应的值，如instance_num为2，则此实例将会连接4562端口。
 
 ## Airsim的PX4远程连接配置
 
